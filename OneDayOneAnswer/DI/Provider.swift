@@ -11,13 +11,6 @@ import Foundation
 enum ProviderError: Error {
     case notFoundDependency
     case unknown
-
-    var msg: String {
-        switch self {
-        case .notFoundDependency: return "not found"
-        case .unknown: return "unknown error"
-        }
-    }
 }
 
 protocol Provider {
@@ -40,9 +33,7 @@ extension Provider {
         if let object = dependencies[tag] {
             return object
         }
-        guard let object = try? createDependency(tag: tag) else {
-            throw ProviderError.notFoundDependency
-        }
+        let object = try createDependency(tag: tag)
         dependencies[tag] = object
         return object
     }
