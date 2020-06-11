@@ -53,7 +53,7 @@ class SqliteDataBase: DataBase {
             .appendingPathComponent(SqliteDataBase.dbName) else {
                 return false
         }
-        guard sqlite3_open(fileURL.path, &sqlite) == SQLITE_OK else {
+        guard sqlite3_open_v2(fileURL.path, &sqlite, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK else {
             return false
         }
         return true
@@ -176,7 +176,7 @@ class SqliteDataBase: DataBase {
 
         guard sqlite3_prepare_v2(self.sqlite, query, -1, &statement, nil) == SQLITE_OK else {
             let errmsg: String = String(cString: sqlite3_errmsg(self.sqlite))
-            print(errmsg)
+            print("sqlite3 error :", errmsg)
             return nil
         }
 
@@ -184,7 +184,7 @@ class SqliteDataBase: DataBase {
 
         guard sqlite3_step(statement) == SQLITE_ROW else {
             let errmsg: String = String(cString: sqlite3_errmsg(self.sqlite))
-            print(errmsg)
+            print("sqlite3 error :", errmsg)
             return nil
         }
 
