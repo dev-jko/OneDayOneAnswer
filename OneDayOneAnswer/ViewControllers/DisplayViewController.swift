@@ -38,6 +38,7 @@ class DisplayViewController: BaseViewController {
         view.layer.cornerRadius = 15
         view.layer.masksToBounds = true
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -75,6 +76,7 @@ class DisplayViewController: BaseViewController {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         view.layer.cornerRadius = 15
         view.layer.masksToBounds = true
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -109,18 +111,16 @@ class DisplayViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setArticle(date: dateToSet)
-        showArticle(article: article!)
+        setArticle()
 
         setAutoLayout()
     }
 
     override func provideDependency() {
-        super.provideDependency()
-        if let db = try? provider?.getDependency(tag: "DataBase") as? DataBase {
-            self.sqldb = db
-        } else {
-            print("err")
+        do {
+            self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
+        } catch {
+            print("Error : \(error)")
         }
     }
 
@@ -158,7 +158,6 @@ class DisplayViewController: BaseViewController {
         scrollContentView.addSubview(topBox)
         scrollContentView.addSubview(bottomBox)
         scrollView.addSubview(scrollContentView)
-        
 
         [
 
@@ -226,15 +225,48 @@ class DisplayViewController: BaseViewController {
 
     }
 
-    private func setArticle(date: Date?) {
-        let dateToSet: Date
-        if date == nil {
-            dateToSet = Date()
-        } else { dateToSet = date! }
-        article = sqldb?.selectArticle(date: dateToSet)
+    override func onLoading() {
+        super.onLoading()
+        topBox.isHidden = true
+        bottomBox.isHidden = true
     }
 
-    private func showArticle(article: Article) {
+    override func onLoadingSuccess() {
+        guard self.article != nil else {
+            state = .failure
+            return
+        }
+        super.onLoadingSuccess()
+        topBox.isHidden = false
+        bottomBox.isHidden = false
+        showArticle()
+    }
+
+    private func setArticle() {
+        state = .loading
+        if dateToSet == nil {
+            dateToSet = Date()
+        }
+        guard let date = dateToSet else {
+            state = .failure
+            return
+        }
+        DispatchQueue.global().async { [weak self] in
+            guard let `self` = self else { return }
+            self.article = self.sqldb?.selectArticle(date: date)
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.state = .success
+            }
+        }
+
+    }
+
+    private func showArticle() {
+        guard let article = self.article else {
+            state = .failure
+            return
+        }
         dateLabel.text = dateToStr(article.date, "M월 d일")
         answerLabel.text = article.answer
 

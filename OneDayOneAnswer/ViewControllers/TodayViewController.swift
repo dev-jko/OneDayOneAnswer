@@ -101,27 +101,17 @@ class TodayViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setArticle(date: dateToSet)
-
         setAutoLayout()
-
-        if article?.answer == "" {
-            beginAnimate()
-        }
-        showArticle(article: article!)
-        adjustWritingMode()
+        setArticle()
 
         picker.delegate = self
-        setLoadingSpinner()
-        loadingView.startAnimating()
     }
 
     override func provideDependency() {
-        super.provideDependency()
-        if let db = try? provider?.getDependency(tag: "DataBase") as? DataBase {
-            self.sqldb = db
-        } else {
-            print("err")
+        do {
+            self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
+        } catch {
+            print("Error : \(error)")
         }
     }
 
@@ -205,22 +195,66 @@ class TodayViewController: BaseViewController {
 
     }
 
-    private func setArticle(date: Date?) {
-        let dateToSet: Date
-        if date == nil {
+    override func onLoading() {
+        super.onLoading()
+        topBox.isHidden = true
+        bottomBox.isHidden = true
+    }
+
+    override func onLoadingSuccess() {
+        guard article != nil else {
+            state = .failure
+            return
+        }
+        super.onLoadingSuccess()
+        beginAnimate()
+        showArticle()
+        adjustWritingMode()
+        topBox.isHidden = false
+        bottomBox.isHidden = false
+    }
+
+    override func onLoadingFailure() {
+        super.onLoadingFailure()
+    }
+
+    private func setArticle() {
+        state = .loading
+        if dateToSet == nil {
             dateToSet = Date()
-        } else { dateToSet = date! }
-        article = sqldb?.selectArticle(date: dateToSet)
+        }
+        guard let date = dateToSet else {
+            state = .failure
+            return
+        }
+        DispatchQueue.global().async { [weak self] in
+            guard let `self` = self else { return }
+            self.article = self.sqldb?.selectArticle(date: date)
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.state = .success
+            }
+        }
     }
 
     private func beginAnimate() {
         bottomBox.alpha = 0
         topBox.alpha = 0
-        UIView.animate(withDuration: 1, delay: 0, options: .curveEaseOut, animations: { self.bottomBox.alpha = 1 })
-        UIView.animate(withDuration: 1, delay: 1.5, options: .curveEaseOut, animations: { self.topBox.alpha = 1 })
+        UIView.animate(withDuration: 1, delay: 0, options: .curveEaseOut, animations: { [weak self] in
+            guard let `self` = self else { return }
+            self.bottomBox.alpha = 1
+        })
+        UIView.animate(withDuration: 1, delay: 1.5, options: .curveEaseOut, animations: { [weak self] in
+            guard let `self` = self else { return }
+            self.topBox.alpha = 1
+        })
     }
 
-    private func showArticle(article: Article) {
+    private func showArticle() {
+        guard let article = self.article else {
+            state = .failure
+            return
+        }
         dateLabel.text = dateToStr(article.date, "M월 d일")
         answerText.text = article.answer
         questionLabel.text = article.question
@@ -262,8 +296,7 @@ class TodayViewController: BaseViewController {
             let dataLostAlert = UIAlertController(title: "작성한 내용을 잃게되어요",
                                                   message: "그래도 계속 할까요?",
                                                   preferredStyle: .alert)
-            let doAction: UIAlertAction = UIAlertAction(title: "네", style: .default) {
-                _ in
+            let doAction: UIAlertAction = UIAlertAction(title: "네", style: .default) { _ in
                 let vc = self.storyboard?.instantiateViewController(withIdentifier: "ListViewController")
                 guard let listVC = vc as? ListViewController else {
                     return

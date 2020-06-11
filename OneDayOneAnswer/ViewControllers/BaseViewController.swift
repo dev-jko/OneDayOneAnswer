@@ -17,7 +17,16 @@ enum LoadingState {
 class BaseViewController: UIViewController {
     var provider: Provider?
     var state: LoadingState {
-        didSet { print(state) }
+        didSet {
+            switch state {
+            case .loading:
+                onLoading()
+            case .success:
+                onLoadingSuccess()
+            case .failure:
+                onLoadingFailure()
+            }
+        }
     }
 
     let loadingView: UIActivityIndicatorView = {
@@ -26,6 +35,18 @@ class BaseViewController: UIViewController {
         view.stopAnimating()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+
+    let errorView: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.font = UIFont(name: "DXPnMStd-Regular", size: 24)
+        label.text = "불러오기 중\n문제가 발생했습니다."
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
 
     func setLoadingSpinner() {
@@ -40,6 +61,46 @@ class BaseViewController: UIViewController {
         ].forEach { $0.isActive = true }
     }
 
+    func setErrorView() {
+        view.addSubview(errorView)
+
+        [
+            errorView.topAnchor.constraint(equalTo: view.topAnchor),
+            errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+
+        ].forEach { $0.isActive = true }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .black
+        provideDependency()
+        setLoadingSpinner()
+        setErrorView()
+    }
+
+    func provideDependency() {
+        preconditionFailure("This method must be overridden")
+    }
+
+    func onLoading() {
+        view.bringSubviewToFront(loadingView)
+        loadingView.startAnimating()
+        errorView.isHidden = true
+    }
+
+    func onLoadingSuccess() {
+        loadingView.stopAnimating()
+    }
+
+    func onLoadingFailure() {
+        view.bringSubviewToFront(errorView)
+        errorView.isHidden = false
+        loadingView.stopAnimating()
+    }
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         state = .loading
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -48,15 +109,5 @@ class BaseViewController: UIViewController {
     required init?(coder: NSCoder) {
         state = .loading
         super.init(coder: coder)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        provideDependency()
-
-    }
-
-    func provideDependency() {
-
     }
 }
