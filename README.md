@@ -1,4 +1,5 @@
 # 내 맘대로 수정해보기용 fork repo
+- 원본 : [https://github.com/42-JMJ/iOS-App-Project](https://github.com/42-JMJ/iOS-App-Project)
 
 
 ![bnnr](https://user-images.githubusercontent.com/60066472/81475533-df9a8300-9247-11ea-91c1-65b75a4253ab.png)
