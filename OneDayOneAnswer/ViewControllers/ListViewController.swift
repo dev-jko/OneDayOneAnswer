@@ -25,6 +25,7 @@ class ListViewController: BaseViewController {
         tv.backgroundColor = .clear
         tv.showsVerticalScrollIndicator = false
         tv.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+        tv.isHidden = true
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
@@ -39,21 +40,51 @@ class ListViewController: BaseViewController {
     }()
 
     private var sqldb: DataBase?
-    private var article: [Article] = []
+    private var articles: [Article] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setAutoLayout()
+        loadArticles()
 
-        let today = Date()
-        if let article = sqldb?.selectArticles() {
-            self.article =  article.filter { $0.date < today }
+    }
+
+    override func onLoading() {
+        super.onLoading()
+        tableView.isHidden = true
+    }
+
+    override func onLoadingSuccess() {
+        super.onLoadingSuccess()
+        guard !articles.isEmpty else {
+            state = .failure
+            return
+        }
+        tableView.reloadData()
+        tableView.isHidden = false
+    }
+
+    override func onLoadingFailure() {
+        super.onLoadingFailure()
+    }
+
+    func loadArticles() {
+        state = .loading
+        DispatchQueue.global().async { [weak self] in
+            guard let `self` = self else {
+                return
+            }
+            let today = Date()
+            self.articles = self.sqldb?.selectArticles().filter { $0.date <= today } ?? []
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.state = .success
+            }
         }
     }
 
     override func provideDependency() {
-        super.provideDependency()
         if let db = try? provider?.getDependency(tag: "DataBase") as? DataBase {
             self.sqldb = db
         } else {
@@ -89,8 +120,8 @@ class ListViewController: BaseViewController {
             return
         }
         let indexPath = tableView.indexPath(for: cell)
-        let count = article.count - 1
-        let item = article[count - (indexPath?.row)!]
+        let count = articles.count - 1
+        let item = articles[count - (indexPath?.row)!]
 
         nextViewController.dateToSet = item.date
         nextViewController.provider = provider
@@ -101,7 +132,7 @@ class ListViewController: BaseViewController {
 // MARK: - UITableViewDataSource
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return article.count
+            return articles.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,7 +141,7 @@ extension ListViewController: UITableViewDataSource {
             return cell
         }
 
-        let item = article[article.count - indexPath.row - 1]
+        let item = articles[articles.count - indexPath.row - 1]
 
         tvCell.questionLabel.text = item.question
         tvCell.answerLabel.text = item.answer
@@ -126,8 +157,8 @@ extension ListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let count = article.count - 1
-        let item = article[count - (indexPath.row)]
+        let count = articles.count - 1
+        let item = articles[count - (indexPath.row)]
 
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayViewController")
         guard let todayVC = vc as? DisplayViewController else {
