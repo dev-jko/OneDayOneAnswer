@@ -30,7 +30,7 @@ class ListViewController: BaseViewController {
         return tv
     }()
 
-    private let lable: UILabel = {
+    private let label: UILabel = {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
         lb.text = "나의 기록"
@@ -39,15 +39,37 @@ class ListViewController: BaseViewController {
         return lb
     }()
 
+    private lazy var settingBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(#imageLiteral(resourceName: "settings_black").withRenderingMode(.alwaysTemplate), for: .normal)
+        btn.tintColor = .white
+        btn.addTarget(self, action: #selector(settingBtnClicked), for: .touchUpInside)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+
+    @objc
+    func settingBtnClicked(_ sender: Any?) {
+        guard let signManager = self.signManager else { return }
+        if signManager.isLoggedIn {
+            signManager.signOut()
+            return
+        }
+        guard let provider = self.provider else { return }
+        let vc = SignInViewController(provider: provider)
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true, completion: nil)
+    }
+
     private var sqldb: DataBase?
     private var articles: [Article] = []
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setAutoLayout()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         loadArticles()
-
+        if let name = signManager?.user?.displayName {
+            self.label.text = "\(name)님의 기록"
+        }
     }
 
     override func onLoading() {
@@ -85,48 +107,41 @@ class ListViewController: BaseViewController {
     }
 
     override func provideDependency() {
-        if let db = try? provider?.getDependency(tag: "DataBase") as? DataBase {
-            self.sqldb = db
-        } else {
-            print("err")
+        super.provideDependency()
+        do {
+            sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
+        } catch {
+            print(error)
         }
     }
 
-    private func setAutoLayout() {
+    override func setAutoLayout() {
         view.addSubview(backgroundImage)
-        view.addSubview(lable)
+        view.addSubview(label)
+        view.addSubview(settingBtn)
         view.addSubview(tableView)
 
-        backgroundImage.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        [
+            backgroundImage.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-        lable.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        lable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40).isActive = true
-        lable.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            label.heightAnchor.constraint(equalToConstant: 30),
+            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-        tableView.topAnchor.constraint(equalTo: lable.bottomAnchor, constant: 30).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -33).isActive = true
+            settingBtn.widthAnchor.constraint(equalToConstant: 40),
+            settingBtn.heightAnchor.constraint(equalToConstant: 40),
+            settingBtn.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30),
+            settingBtn.centerYAnchor.constraint(equalTo: label.centerYAnchor),
+
+            tableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -33)
+        ].forEach { $0.isActive = true }
     }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let nextViewController: DisplayViewController = segue.destination as? DisplayViewController else {
-            return
-        }
-        guard let cell: UITableViewCell = sender as? UITableViewCell else {
-            return
-        }
-        let indexPath = tableView.indexPath(for: cell)
-        let count = articles.count - 1
-        let item = articles[count - (indexPath?.row)!]
-
-        nextViewController.dateToSet = item.date
-        nextViewController.provider = provider
-    }
-
 }
 
 // MARK: - UITableViewDataSource
@@ -160,15 +175,12 @@ extension ListViewController: UITableViewDelegate {
         let count = articles.count - 1
         let item = articles[count - (indexPath.row)]
 
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayViewController")
-        guard let todayVC = vc as? DisplayViewController else {
-            return
-        }
-        todayVC.modalTransitionStyle = .flipHorizontal
-        todayVC.modalPresentationStyle = .fullScreen
-        todayVC.dateToSet = item.date
-        todayVC.provider = provider
-        present(todayVC, animated: true, completion: nil)
+        guard let provider = self.provider else { return }
+        let displayVC = DisplayViewController(provider: provider)
+        displayVC.modalTransitionStyle = .flipHorizontal
+        displayVC.modalPresentationStyle = .fullScreen
+        displayVC.dateToSet = item.date
+        present(displayVC, animated: true, completion: nil)
     }
 
 }

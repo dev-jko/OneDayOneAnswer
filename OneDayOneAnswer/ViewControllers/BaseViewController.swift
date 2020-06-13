@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import GoogleSignIn
 
 enum LoadingState {
     case loading
@@ -16,6 +18,7 @@ enum LoadingState {
 
 class BaseViewController: UIViewController {
     var provider: Provider?
+    var signManager: SignManager?
     var state: LoadingState {
         didSet {
             switch state {
@@ -73,16 +76,24 @@ class BaseViewController: UIViewController {
         ].forEach { $0.isActive = true }
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black
-        provideDependency()
+    func setAutoLayout() {
         setLoadingSpinner()
         setErrorView()
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .black
+        provideDependency()
+        setAutoLayout()
+    }
+
     func provideDependency() {
-        preconditionFailure("This method must be overridden")
+        do {
+            self.signManager = try provider?.getDependency(tag: "SignManager") as? SignManager
+        } catch {
+            print(error)
+        }
     }
 
     func onLoading() {
@@ -101,6 +112,12 @@ class BaseViewController: UIViewController {
         loadingView.stopAnimating()
     }
 
+    init(provider: Provider) {
+        self.provider = provider
+        self.state = .loading
+        super.init(nibName: nil, bundle: nil)
+    }
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         state = .loading
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -109,5 +126,25 @@ class BaseViewController: UIViewController {
     required init?(coder: NSCoder) {
         state = .loading
         super.init(coder: coder)
+    }
+
+    var handle: AuthStateDidChangeListenerHandle?
+}
+
+extension BaseViewController {
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        handle = Auth.auth().addStateDidChangeListener { (_, _) in
+
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let handle = self.handle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
+
     }
 }
