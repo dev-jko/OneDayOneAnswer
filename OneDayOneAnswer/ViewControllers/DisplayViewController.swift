@@ -108,20 +108,18 @@ class DisplayViewController: BaseViewController {
     private var article: Article?
     var dateToSet: Date?
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setArticle()
-
-        setAutoLayout()
-    }
-
     override func provideDependency() {
+        super.provideDependency()
         do {
             self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
         } catch {
             print("Error : \(error)")
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setArticle()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -130,7 +128,9 @@ class DisplayViewController: BaseViewController {
     }
 
     // MARK: - AutoLayout
-    private func setAutoLayout() {
+    override func setAutoLayout() {
+        super.setAutoLayout()
+
         setScrollView()
 
         view.addSubview(backgroundImage)
@@ -283,31 +283,14 @@ class DisplayViewController: BaseViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let nextViewController: TodayViewController = segue.destination as? TodayViewController else {
-            return
-        }
-        nextViewController.dateToSet = article?.date
-    }
-
     @objc func listBtnTouchOn(_ sender: UIButton) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ListViewController")
-        guard let listVC = vc as? ListViewController else {
-            return
-        }
-        listVC.provider = provider
-        listVC.modalTransitionStyle = .flipHorizontal
-        listVC.modalPresentationStyle = .fullScreen
-        present(listVC, animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
     @objc func editBtnTouchOn(_ sender: UIButton) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "TodayViewController")
-        guard let todayVC = vc as? TodayViewController else {
-            return
-        }
+        guard let provider = self.provider else { return }
+        let todayVC = TodayViewController(provider: provider)
         todayVC.dateToSet = article?.date
-        todayVC.provider = provider
         todayVC.modalTransitionStyle = .flipHorizontal
         todayVC.modalPresentationStyle = .fullScreen
         present(todayVC, animated: true, completion: nil)

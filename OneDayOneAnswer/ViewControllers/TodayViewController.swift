@@ -101,13 +101,13 @@ class TodayViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setAutoLayout()
         setArticle()
 
         picker.delegate = self
     }
 
     override func provideDependency() {
+        super.provideDependency()
         do {
             self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
         } catch {
@@ -116,7 +116,7 @@ class TodayViewController: BaseViewController {
     }
 
     // MARK: - AutoLayout
-    private func setAutoLayout() {
+    override func setAutoLayout() {
         setTopBox()
         setBottomBox()
         view.addSubview(backgroundImage)
@@ -296,44 +296,22 @@ class TodayViewController: BaseViewController {
             let dataLostAlert = UIAlertController(title: "작성한 내용을 잃게되어요",
                                                   message: "그래도 계속 할까요?",
                                                   preferredStyle: .alert)
-            let doAction: UIAlertAction = UIAlertAction(title: "네", style: .default) { _ in
-                let vc = self.storyboard?.instantiateViewController(withIdentifier: "ListViewController")
-                guard let listVC = vc as? ListViewController else {
-                    return
-                }
-                listVC.modalTransitionStyle = .flipHorizontal
-                listVC.modalPresentationStyle = .fullScreen
-                listVC.provider = self.provider
-                self.present(listVC, animated: true, completion: nil)
+            let doAction: UIAlertAction = UIAlertAction(title: "네", style: .default) { [weak self] _ in
+                self?.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
             }
             let undoAction: UIAlertAction = UIAlertAction(title: "아니오", style: .default)
             dataLostAlert.addAction(doAction)
             dataLostAlert.addAction(undoAction)
             present(dataLostAlert, animated: true, completion: nil)
         } else {
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "ListViewController")
-            guard let listVC = vc as? ListViewController else {
-                return
-            }
-            listVC.modalTransitionStyle = .flipHorizontal
-            listVC.modalPresentationStyle = .fullScreen
-            listVC.provider = provider
-            present(listVC, animated: true, completion: nil)
+            view.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }
     }
 
     @objc func btnSaveTouchOn(_ sender: UIButton) {
         article!.answer = answerText.text
         if sqldb?.updateArticle(article: article!) == true {
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayViewController")
-            guard let displayVC = vc as? DisplayViewController else {
-                return
-            }
-            displayVC.modalTransitionStyle = .flipHorizontal
-            displayVC.modalPresentationStyle = .fullScreen
-            displayVC.dateToSet = article?.date
-            displayVC.provider = provider
-            present(displayVC, animated: true, completion: nil)
+            dismiss(animated: true, completion: nil)
         } else {
             print("Update Test Error!")
         }
@@ -362,14 +340,6 @@ class TodayViewController: BaseViewController {
     @objc func pickImage(_ sender: Any) {
         picker.sourceType = .photoLibrary
         present(picker, animated: true, completion: nil)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let nextViewController: DisplayViewController = segue.destination as? DisplayViewController else {
-            return
-        }
-        nextViewController.dateToSet = dateToSet
-        nextViewController.provider = provider
     }
 }
 

@@ -24,6 +24,8 @@ extension Provider {
         switch tag {
         case "DataBase":
             return SqliteDataBase.instance
+        case "SignManager":
+            return SignManager.shared
         default:
             throw ProviderError.notFoundDependency
         }
