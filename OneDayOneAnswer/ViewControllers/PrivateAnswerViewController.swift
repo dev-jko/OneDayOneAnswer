@@ -8,7 +8,21 @@
 
 import UIKit
 
+// TODO: - private answer view controller 만들기
+
+// MARK: - UINavigationController
+
 class PrivateAnswerViewController: UINavigationController {
-    // MARK: - private answer view controller 만들기
-    // TODO: - private answer view controller 만들기
+
+    // MARK: - properties
+
+    // MARK: - initializers
+
+    // MARK: - life cycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+
 }

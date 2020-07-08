@@ -10,6 +10,8 @@ import UIKit
 
 class ListViewController: BaseViewController {
 
+    // MARK: - UI properties
+
     private let backgroundImage: UIImageView = {
         let iv = UIImageView()
         let image = UIImage(imageLiteralResourceName: "catcat0")
@@ -39,38 +41,40 @@ class ListViewController: BaseViewController {
         return lb
     }()
 
-    private lazy var settingBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(#imageLiteral(resourceName: "settings_black").withRenderingMode(.alwaysTemplate), for: .normal)
-        btn.tintColor = .white
-        btn.addTarget(self, action: #selector(settingBtnClicked), for: .touchUpInside)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
-    }()
+    // MARK: - properties
 
-    @objc
-    func settingBtnClicked(_ sender: Any?) {
-        guard let signManager = self.signManager else { return }
-        if signManager.isLoggedIn {
-            signManager.signOut()
-            return
-        }
-        guard let provider = self.provider else { return }
-        let vc = SignInViewController(provider: provider)
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true, completion: nil)
+    private let displayViewControllerFactory: () -> DisplayViewController
+    private let sqldb: DataBase
+    private var articles: [Article] = []
+
+    // MARK: - initializers
+
+    init(
+        displayViewControllerFactory: @escaping () -> DisplayViewController,
+        dataBase: DataBase
+    ) {
+        self.displayViewControllerFactory = displayViewControllerFactory
+        self.sqldb = dataBase
+        super.init()
     }
 
-    private var sqldb: DataBase?
-    private var articles: [Article] = []
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - life cycle
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadArticles()
-        if let name = signManager?.user?.displayName {
-            self.label.text = "\(name)님의 기록"
-        }
+
+        // TODO: - 유저 이름 표시하기
+//        if let name = signManager?.user?.displayName {
+//            self.label.text = "\(name)님의 기록"
+//        }
     }
+
+    // MARK: - methods
 
     override func onLoading() {
         super.onLoading()
@@ -98,7 +102,7 @@ class ListViewController: BaseViewController {
                 return
             }
             let today = Date()
-            self.articles = self.sqldb?.selectArticles().filter { $0.date <= today } ?? []
+            self.articles = self.sqldb.selectArticles().filter { $0.date <= today }
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
                 self.state = .success
@@ -106,19 +110,9 @@ class ListViewController: BaseViewController {
         }
     }
 
-    override func provideDependency() {
-        super.provideDependency()
-        do {
-            sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
-        } catch {
-            print(error)
-        }
-    }
-
     override func setAutoLayout() {
         view.addSubview(backgroundImage)
         view.addSubview(label)
-        view.addSubview(settingBtn)
         view.addSubview(tableView)
 
         [
@@ -131,11 +125,6 @@ class ListViewController: BaseViewController {
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            settingBtn.widthAnchor.constraint(equalToConstant: 40),
-            settingBtn.heightAnchor.constraint(equalToConstant: 40),
-            settingBtn.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30),
-            settingBtn.centerYAnchor.constraint(equalTo: label.centerYAnchor),
-
             tableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
@@ -145,6 +134,7 @@ class ListViewController: BaseViewController {
 }
 
 // MARK: - UITableViewDataSource
+
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return articles.count
@@ -170,13 +160,13 @@ extension ListViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
+
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let count = articles.count - 1
         let item = articles[count - (indexPath.row)]
 
-        guard let provider = self.provider else { return }
-        let displayVC = DisplayViewController(provider: provider)
+        let displayVC = displayViewControllerFactory()
         displayVC.modalTransitionStyle = .flipHorizontal
         displayVC.modalPresentationStyle = .fullScreen
         displayVC.dateToSet = item.date

@@ -17,8 +17,7 @@ enum LoadingState {
 }
 
 class BaseViewController: UIViewController {
-    var provider: Provider?
-    var signManager: SignManager?
+
     var state: LoadingState {
         didSet {
             switch state {
@@ -84,16 +83,7 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        provideDependency()
         setAutoLayout()
-    }
-
-    func provideDependency() {
-        do {
-            self.signManager = try provider?.getDependency(tag: "SignManager") as? SignManager
-        } catch {
-            print(error)
-        }
     }
 
     func onLoading() {
@@ -112,20 +102,13 @@ class BaseViewController: UIViewController {
         loadingView.stopAnimating()
     }
 
-    init(provider: Provider) {
-        self.provider = provider
+    init() {
         self.state = .loading
         super.init(nibName: nil, bundle: nil)
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        state = .loading
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-
     required init?(coder: NSCoder) {
-        state = .loading
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
 
     var handle: AuthStateDidChangeListenerHandle?

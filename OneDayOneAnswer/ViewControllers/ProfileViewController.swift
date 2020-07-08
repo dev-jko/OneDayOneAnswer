@@ -11,10 +11,9 @@ import UIKit
 class ProfileViewController: UINavigationController {
     // MARK: - profile view controller 만들기
     // TODO: - profile view controller 만들기
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+
     }
 }

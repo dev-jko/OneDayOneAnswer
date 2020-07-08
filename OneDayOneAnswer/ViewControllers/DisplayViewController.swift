@@ -10,7 +10,11 @@ import Foundation
 
 import UIKit
 
+// MARK: - UIViewController
+
 class DisplayViewController: BaseViewController {
+
+    // MARK: - UI properties
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
@@ -104,18 +108,29 @@ class DisplayViewController: BaseViewController {
         return label
     }()
 
-    private var sqldb: DataBase?
+    // MARK: - properties
+
+    private let todayViewControllerFactory: () -> TodayViewController
+    private let sqldb: DataBase
     private var article: Article?
     var dateToSet: Date?
 
-    override func provideDependency() {
-        super.provideDependency()
-        do {
-            self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
-        } catch {
-            print("Error : \(error)")
-        }
+    // MARK: - initializers
+
+    init(
+        todayViewControllerFactory: @escaping () -> TodayViewController,
+        dataBase: DataBase
+    ) {
+        self.todayViewControllerFactory = todayViewControllerFactory
+        self.sqldb = dataBase
+        super.init()
     }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - life cycle
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -126,6 +141,8 @@ class DisplayViewController: BaseViewController {
         super.viewDidAppear(animated)
         scrollView.contentSize.height = scrollContentView.frame.height
     }
+
+    // MARK: - methods
 
     // MARK: - AutoLayout
     override func setAutoLayout() {
@@ -253,7 +270,7 @@ class DisplayViewController: BaseViewController {
         }
         DispatchQueue.global().async { [weak self] in
             guard let `self` = self else { return }
-            self.article = self.sqldb?.selectArticle(date: date)
+            self.article = self.sqldb.selectArticle(date: date)
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
                 self.state = .success
@@ -288,8 +305,8 @@ class DisplayViewController: BaseViewController {
     }
 
     @objc func editBtnTouchOn(_ sender: UIButton) {
-        guard let provider = self.provider else { return }
-        let todayVC = TodayViewController(provider: provider)
+
+        let todayVC = todayViewControllerFactory()
         todayVC.dateToSet = article?.date
         todayVC.modalTransitionStyle = .flipHorizontal
         todayVC.modalPresentationStyle = .fullScreen

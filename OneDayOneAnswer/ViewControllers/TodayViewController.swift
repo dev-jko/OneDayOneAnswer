@@ -8,7 +8,11 @@
 
 import UIKit
 
+// MARK: - UIViewController
+
 class TodayViewController: BaseViewController {
+
+    // MARK: - UI properties
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
@@ -93,10 +97,25 @@ class TodayViewController: BaseViewController {
         return tv
     }()
 
-    private var sqldb: DataBase?
+    // MARK: - properties
+
+    private let sqldb: DataBase
     private var article: Article?
     var dateToSet: Date?
     let picker = UIImagePickerController()
+
+    // MARK: - initializers
+
+    init(dataBase: DataBase) {
+        self.sqldb = dataBase
+        super.init()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,16 +125,8 @@ class TodayViewController: BaseViewController {
         picker.delegate = self
     }
 
-    override func provideDependency() {
-        super.provideDependency()
-        do {
-            self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
-        } catch {
-            print("Error : \(error)")
-        }
-    }
+    // MARK: - methods
 
-    // MARK: - AutoLayout
     override func setAutoLayout() {
         setTopBox()
         setBottomBox()
@@ -229,7 +240,7 @@ class TodayViewController: BaseViewController {
         }
         DispatchQueue.global().async { [weak self] in
             guard let `self` = self else { return }
-            self.article = self.sqldb?.selectArticle(date: date)
+            self.article = self.sqldb.selectArticle(date: date)
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
                 self.state = .success
@@ -310,7 +321,7 @@ class TodayViewController: BaseViewController {
 
     @objc func btnSaveTouchOn(_ sender: UIButton) {
         article!.answer = answerText.text
-        if sqldb?.updateArticle(article: article!) == true {
+        if sqldb.updateArticle(article: article!) == true {
             dismiss(animated: true, completion: nil)
         } else {
             print("Update Test Error!")
@@ -328,7 +339,7 @@ class TodayViewController: BaseViewController {
                 return
             }
             article?.imagePath = fileName
-            if sqldb?.updateArticle(article: article!) == true {
+            if sqldb.updateArticle(article: article!) == true {
                 print("Image Update Test Success!")
             } else {
                 print("Image Update Test Error!")
@@ -343,15 +354,21 @@ class TodayViewController: BaseViewController {
     }
 }
 
+// MARK: - UITextViewDelegate
+
 extension TodayViewController: UITextViewDelegate {
     func textViewDidChange(_ textViewAnswer: UITextView) {
         adjustWritingMode()
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
+
 extension TodayViewController: UIImagePickerControllerDelegate {
 
 }
+
+// MARK: - UINavigationControllerDelegate
 
 extension TodayViewController: UINavigationControllerDelegate {
 

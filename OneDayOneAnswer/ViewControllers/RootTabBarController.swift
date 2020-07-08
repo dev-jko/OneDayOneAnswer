@@ -8,11 +8,15 @@
 
 import UIKit
 
+// MARK: - RootViewControllerData
+
 public enum RootViewControllerData {
     case privateAnswer
     case sharedAnswer
     case profile(isLoggedIn: Bool)
 }
+
+// MARK: - TabBarItem
 
 public enum TabBarItem {
     case privateAnswer(index: Int)
@@ -20,7 +24,28 @@ public enum TabBarItem {
     case profile(index: Int)
 }
 
+// MARK: - UITabBarController
+
 class RootTabBarController: UITabBarController {
+
+    // MARK: - properties
+
+    private let privateAnswerViewControllerFactory: () -> PrivateAnswerViewController
+
+    // MARK: - initializers
+
+    init(
+        privateAnswerViewControllerFactory: @escaping () -> PrivateAnswerViewController
+    ) {
+        self.privateAnswerViewControllerFactory = privateAnswerViewControllerFactory
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,10 +59,12 @@ class RootTabBarController: UITabBarController {
         setTabBarItemStyles(items: tabBarItems)
     }
 
+    // MARK: - method
+
     private func viewController(from data: RootViewControllerData) -> UIViewController {
         switch data {
         case .privateAnswer:
-            return PrivateAnswerViewController()
+            return privateAnswerViewControllerFactory()
         case .sharedAnswer:
             return SharedAnswerViewController()
         case .profile(let isLoggedIn):
@@ -64,6 +91,8 @@ class RootTabBarController: UITabBarController {
         }
     }
 }
+
+// MARK: - UITabBarControllerDelegate
 
 extension RootTabBarController: UITabBarControllerDelegate {
 
