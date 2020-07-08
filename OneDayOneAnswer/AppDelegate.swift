@@ -24,9 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance()?.delegate = self
 
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = ListViewController(provider: DependencyProvider())
+        self.window = UIWindow()
+        self.window?.rootViewController = RootTabBarController()
         self.window?.makeKeyAndVisible()
+
         sleep(2)
         return true
     }
