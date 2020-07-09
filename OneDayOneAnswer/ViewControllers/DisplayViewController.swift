@@ -37,34 +37,6 @@ class DisplayViewController: BaseViewController {
         return view
     }()
 
-    private let topBox: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 15
-        view.layer.masksToBounds = true
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 17)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private lazy var editBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_edit_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(editBtnTouchOn), for: .touchDown)
-        return btn
-    }()
-
     private let bottomBox: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
@@ -119,6 +91,8 @@ class DisplayViewController: BaseViewController {
 
         let btnItem = UIBarButtonItem(title: "수정", style: .done, target: self, action: #selector(editBtnTouchOn(_:)))
         navigationItem.rightBarButtonItem = btnItem
+        let backBtnItem = UIBarButtonItem(title: "취소", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backBtnItem
     }
 
     required init?(coder: NSCoder) {
@@ -166,21 +140,13 @@ class DisplayViewController: BaseViewController {
     }
 
     private func setScrollView() {
-        setTopBox()
         setBottomBox()
 
-        scrollContentView.addSubview(topBox)
         scrollContentView.addSubview(bottomBox)
         scrollView.addSubview(scrollContentView)
 
         [
-
-            topBox.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 40),
-            topBox.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 33),
-            topBox.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -33),
-            topBox.heightAnchor.constraint(equalToConstant: 55),
-
-            bottomBox.topAnchor.constraint(equalTo: topBox.bottomAnchor, constant: 45),
+            bottomBox.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 40),
             bottomBox.bottomAnchor.constraint(equalTo: answerLabel.bottomAnchor, constant: 30),
             bottomBox.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 33),
             bottomBox.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -33),
@@ -192,26 +158,6 @@ class DisplayViewController: BaseViewController {
             scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
 
         ].forEach { $0.isActive = true }
-    }
-
-    private func setTopBox() {
-        topBox.addSubview(dateLabel)
-        topBox.addSubview(editBtn)
-
-        [
-            dateLabel.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            dateLabel.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            dateLabel.leadingAnchor.constraint(equalTo: topBox.leadingAnchor, constant: 20),
-            dateLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
-
-            editBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            editBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            editBtn.trailingAnchor.constraint(equalTo: topBox.trailingAnchor, constant: -10),
-            editBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            editBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20)
-
-        ].forEach { $0.isActive = true }
-
     }
 
     private func setBottomBox() {
@@ -233,7 +179,6 @@ class DisplayViewController: BaseViewController {
 
     override func onLoading() {
         super.onLoading()
-        topBox.isHidden = true
         bottomBox.isHidden = true
     }
 
@@ -243,7 +188,6 @@ class DisplayViewController: BaseViewController {
             return
         }
         super.onLoadingSuccess()
-        topBox.isHidden = false
         bottomBox.isHidden = false
         showArticle()
     }
@@ -273,7 +217,7 @@ class DisplayViewController: BaseViewController {
             state = .failure
             return
         }
-        dateLabel.text = dateToStr(article.date, "M월 d일")
+        navigationItem.title = dateToStr(article.date, "M월 d일")
         answerLabel.text = article.answer
 
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()

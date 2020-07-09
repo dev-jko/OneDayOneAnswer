@@ -20,53 +20,6 @@ class TodayViewController: BaseViewController {
         return imgView
     }()
 
-    private let topBox: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 15
-        view.layer.masksToBounds = true
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 17)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private lazy var listBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_list_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(btnListTouchOn), for: .touchDown)
-        return btn
-    }()
-
-    private lazy var imgPickerBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_photolibrary_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(pickImage), for: .touchDown)
-        return btn
-    }()
-
-    private lazy var saveBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_save_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(btnSaveTouchOn(_:)), for: .touchDown)
-        return btn
-    }()
-
     private let bottomBox: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
@@ -97,26 +50,36 @@ class TodayViewController: BaseViewController {
         return tv
     }()
 
-    // MARK: - properties
+    private let saveBtn: UIBarButtonItem = UIBarButtonItem(
+        image: #imageLiteral(resourceName: "outline_save_black_36pt").withRenderingMode(.alwaysTemplate),
+        style: .done,
+        target: self,
+        action: #selector(btnSaveTouchOn(_:))
+    )
+
+    // MARK: - Properties
 
     private let sqldb: DataBase
     private var article: Article?
     private var dateToSet: Date?
+    private var imagePath: String?
     let picker = UIImagePickerController()
 
-    // MARK: - initializers
+    // MARK: - Lifecycle
 
     init(dataBase: DataBase, date: Date? = nil) {
         self.sqldb = dataBase
         self.dateToSet = date
         super.init()
+
+        let image = #imageLiteral(resourceName: "outline_image_black_36pt").withRenderingMode(.alwaysTemplate)
+        let imagePickerBtnItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(pickImage(_:)))
+        navigationItem.setRightBarButtonItems([saveBtn, imagePickerBtnItem], animated: true)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // MARK: - life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,13 +89,15 @@ class TodayViewController: BaseViewController {
         picker.delegate = self
     }
 
-    // MARK: - methods
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+
+    // MARK: - Functions
 
     override func setAutoLayout() {
-        setTopBox()
         setBottomBox()
         view.addSubview(backgroundImage)
-        view.addSubview(topBox)
         view.addSubview(bottomBox)
 
         [
@@ -141,52 +106,12 @@ class TodayViewController: BaseViewController {
             backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            topBox.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            topBox.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 33),
-            topBox.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -33),
-            topBox.heightAnchor.constraint(equalToConstant: 55),
-
-            bottomBox.topAnchor.constraint(equalTo: topBox.bottomAnchor, constant: 45),
+            bottomBox.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             bottomBox.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
             bottomBox.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 33),
             bottomBox.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -33)
 
         ].forEach { $0.isActive = true }
-    }
-
-    private func setTopBox() {
-        topBox.addSubview(dateLabel)
-        topBox.addSubview(listBtn)
-        topBox.addSubview(imgPickerBtn)
-        topBox.addSubview(saveBtn)
-
-        [
-            dateLabel.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            dateLabel.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            dateLabel.leadingAnchor.constraint(equalTo: topBox.leadingAnchor, constant: 20),
-            dateLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 128),
-
-            listBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            listBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            listBtn.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 10),
-            listBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            listBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20),
-
-            imgPickerBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            imgPickerBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            imgPickerBtn.leadingAnchor.constraint(equalTo: listBtn.trailingAnchor, constant: 10),
-            imgPickerBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            imgPickerBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20),
-
-            saveBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            saveBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            saveBtn.leadingAnchor.constraint(equalTo: imgPickerBtn.trailingAnchor, constant: 10),
-            saveBtn.trailingAnchor.constraint(equalTo: topBox.trailingAnchor, constant: -10),
-            saveBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            saveBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20)
-
-        ].forEach { $0.isActive = true }
-
     }
 
     private func setBottomBox() {
@@ -209,7 +134,6 @@ class TodayViewController: BaseViewController {
 
     override func onLoading() {
         super.onLoading()
-        topBox.isHidden = true
         bottomBox.isHidden = true
     }
 
@@ -222,7 +146,6 @@ class TodayViewController: BaseViewController {
         beginAnimate()
         showArticle()
         adjustWritingMode()
-        topBox.isHidden = false
         bottomBox.isHidden = false
     }
 
@@ -242,6 +165,7 @@ class TodayViewController: BaseViewController {
         DispatchQueue.global().async { [weak self] in
             guard let `self` = self else { return }
             self.article = self.sqldb.selectArticle(date: date)
+            self.imagePath = self.article?.imagePath
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
                 self.state = .success
@@ -251,14 +175,9 @@ class TodayViewController: BaseViewController {
 
     private func beginAnimate() {
         bottomBox.alpha = 0
-        topBox.alpha = 0
         UIView.animate(withDuration: 1, delay: 0, options: .curveEaseOut, animations: { [weak self] in
             guard let `self` = self else { return }
             self.bottomBox.alpha = 1
-        })
-        UIView.animate(withDuration: 1, delay: 1.5, options: .curveEaseOut, animations: { [weak self] in
-            guard let `self` = self else { return }
-            self.topBox.alpha = 1
         })
     }
 
@@ -267,35 +186,24 @@ class TodayViewController: BaseViewController {
             state = .failure
             return
         }
-        dateLabel.text = dateToStr(article.date, "M월 d일")
+        navigationItem.title = dateToStr(article.date, "M월 d일")
         answerText.text = article.answer
         questionLabel.text = article.question
-//        answerText.textContainerInset
-//            = UIEdgeInsets(top: 20, left: 25, bottom: 20, right: 25)
-
-//        let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
-//        style.lineSpacing = 10
-//        let attr = [NSAttributedString.Key.paragraphStyle: style]
-//        questionLabel.attributedText = NSAttributedString(string: article.question, attributes: attr)
-//        answerText.attributedText = NSAttributedString(string: answerText.text, attributes: attr)
-//        answerText.textColor = .white
 
         if article.imagePath == "" {
             backgroundImage.image = UIImage(named: "catcat0")
         } else {
             backgroundImage.image = getUIImageFromDocDir(fileName: article.imagePath)
         }
-        backgroundImage.contentMode = .scaleAspectFill
     }
 
     private func adjustWritingMode() {
-        if answerText.text.isEmpty && article!.answer.isEmpty
-            && article!.imagePath == "" {
-            saveBtn.setImage(UIImage(named: "to_save_gray"), for: .normal)
-            saveBtn.isUserInteractionEnabled    =   false
+        if answerText.text == article?.answer && imagePath == article?.imagePath {
+            saveBtn.isEnabled = false
+            saveBtn.tintColor = .gray
         } else {
-            saveBtn.setImage(UIImage(named: "to_save_white"), for: .normal)
-            saveBtn.isUserInteractionEnabled    =   true
+            saveBtn.isEnabled = true
+            saveBtn.tintColor = .systemBlue
         }
     }
 
@@ -309,21 +217,23 @@ class TodayViewController: BaseViewController {
                                                   message: "그래도 계속 할까요?",
                                                   preferredStyle: .alert)
             let doAction: UIAlertAction = UIAlertAction(title: "네", style: .default) { [weak self] _ in
-                self?.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                self?.navigationController?.popViewController(animated: true)
             }
             let undoAction: UIAlertAction = UIAlertAction(title: "아니오", style: .default)
             dataLostAlert.addAction(doAction)
             dataLostAlert.addAction(undoAction)
             present(dataLostAlert, animated: true, completion: nil)
         } else {
-            view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+            self.navigationController?.popViewController(animated: true)
         }
     }
 
     @objc func btnSaveTouchOn(_ sender: UIButton) {
-        article!.answer = answerText.text
-        if sqldb.updateArticle(article: article!) == true {
-            dismiss(animated: true, completion: nil)
+        guard var article = article else { print("save error article is nil"); return }
+        article.answer = answerText.text
+        article.imagePath = imagePath ?? ""
+        if sqldb.updateArticle(article: article) == true {
+            self.navigationController?.popViewController(animated: true)
         } else {
             print("Update Test Error!")
         }
@@ -339,12 +249,8 @@ class TodayViewController: BaseViewController {
                 print("save error")
                 return
             }
-            article?.imagePath = fileName
-            if sqldb.updateArticle(article: article!) == true {
-                print("Image Update Test Success!")
-            } else {
-                print("Image Update Test Error!")
-            }
+            imagePath = fileName
+            adjustWritingMode()
         }
         self.dismiss(animated: true, completion: nil)
     }
