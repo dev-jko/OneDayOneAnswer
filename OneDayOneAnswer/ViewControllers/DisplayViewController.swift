@@ -10,7 +10,11 @@ import Foundation
 
 import UIKit
 
+// MARK: - UIViewController
+
 class DisplayViewController: BaseViewController {
+
+    // MARK: - UI Properties
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
@@ -31,44 +35,6 @@ class DisplayViewController: BaseViewController {
         view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-
-    private let topBox: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 15
-        view.layer.masksToBounds = true
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 17)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private lazy var listBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_list_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(listBtnTouchOn), for: .touchDown)
-        return btn
-    }()
-
-    private lazy var editBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_edit_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(editBtnTouchOn), for: .touchDown)
-        return btn
     }()
 
     private let bottomBox: UIView = {
@@ -104,17 +70,38 @@ class DisplayViewController: BaseViewController {
         return label
     }()
 
-    private var sqldb: DataBase?
-    private var article: Article?
-    var dateToSet: Date?
+    // MARK: - Properties
 
-    override func provideDependency() {
-        super.provideDependency()
-        do {
-            self.sqldb = try provider?.getDependency(tag: "DataBase") as? DataBase
-        } catch {
-            print("Error : \(error)")
-        }
+    private let todayViewControllerFactory: TodayViewControllerFactory
+    private let sqldb: DataBase
+    private var dateToSet: Date?
+    private var article: Article?
+
+    // MARK: - Lifecycle
+
+    init(
+        todayViewControllerFactory: @escaping TodayViewControllerFactory,
+        dataBase: DataBase,
+        date: Date? = nil
+    ) {
+        self.todayViewControllerFactory = todayViewControllerFactory
+        self.sqldb = dataBase
+        self.dateToSet = date
+        super.init()
+
+        let btnItem = UIBarButtonItem(title: "수정", style: .done, target: self, action: #selector(editBtnTouchOn(_:)))
+        navigationItem.rightBarButtonItem = btnItem
+        let backBtnItem = UIBarButtonItem(title: "취소", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backBtnItem
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -127,7 +114,8 @@ class DisplayViewController: BaseViewController {
         scrollView.contentSize.height = scrollContentView.frame.height
     }
 
-    // MARK: - AutoLayout
+    // MARK: - Functions
+
     override func setAutoLayout() {
         super.setAutoLayout()
 
@@ -152,21 +140,13 @@ class DisplayViewController: BaseViewController {
     }
 
     private func setScrollView() {
-        setTopBox()
         setBottomBox()
 
-        scrollContentView.addSubview(topBox)
         scrollContentView.addSubview(bottomBox)
         scrollView.addSubview(scrollContentView)
 
         [
-
-            topBox.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 40),
-            topBox.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 33),
-            topBox.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -33),
-            topBox.heightAnchor.constraint(equalToConstant: 55),
-
-            bottomBox.topAnchor.constraint(equalTo: topBox.bottomAnchor, constant: 45),
+            bottomBox.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 40),
             bottomBox.bottomAnchor.constraint(equalTo: answerLabel.bottomAnchor, constant: 30),
             bottomBox.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 33),
             bottomBox.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -33),
@@ -178,34 +158,6 @@ class DisplayViewController: BaseViewController {
             scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
 
         ].forEach { $0.isActive = true }
-    }
-
-    private func setTopBox() {
-        topBox.addSubview(dateLabel)
-        topBox.addSubview(listBtn)
-        topBox.addSubview(editBtn)
-
-        [
-            dateLabel.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            dateLabel.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            dateLabel.leadingAnchor.constraint(equalTo: topBox.leadingAnchor, constant: 20),
-            dateLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
-
-            listBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            listBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            listBtn.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 10),
-            listBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            listBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20),
-
-            editBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            editBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            editBtn.leadingAnchor.constraint(equalTo: listBtn.trailingAnchor, constant: 10),
-            editBtn.trailingAnchor.constraint(equalTo: topBox.trailingAnchor, constant: -10),
-            editBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            editBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20)
-
-        ].forEach { $0.isActive = true }
-
     }
 
     private func setBottomBox() {
@@ -227,7 +179,6 @@ class DisplayViewController: BaseViewController {
 
     override func onLoading() {
         super.onLoading()
-        topBox.isHidden = true
         bottomBox.isHidden = true
     }
 
@@ -237,7 +188,6 @@ class DisplayViewController: BaseViewController {
             return
         }
         super.onLoadingSuccess()
-        topBox.isHidden = false
         bottomBox.isHidden = false
         showArticle()
     }
@@ -253,7 +203,7 @@ class DisplayViewController: BaseViewController {
         }
         DispatchQueue.global().async { [weak self] in
             guard let `self` = self else { return }
-            self.article = self.sqldb?.selectArticle(date: date)
+            self.article = self.sqldb.selectArticle(date: date)
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
                 self.state = .success
@@ -267,7 +217,7 @@ class DisplayViewController: BaseViewController {
             state = .failure
             return
         }
-        dateLabel.text = dateToStr(article.date, "M월 d일")
+        navigationItem.title = dateToStr(article.date, "M월 d일")
         answerLabel.text = article.answer
 
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
@@ -283,16 +233,9 @@ class DisplayViewController: BaseViewController {
         }
     }
 
-    @objc func listBtnTouchOn(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
-    }
-
     @objc func editBtnTouchOn(_ sender: UIButton) {
-        guard let provider = self.provider else { return }
-        let todayVC = TodayViewController(provider: provider)
-        todayVC.dateToSet = article?.date
-        todayVC.modalTransitionStyle = .flipHorizontal
-        todayVC.modalPresentationStyle = .fullScreen
-        present(todayVC, animated: true, completion: nil)
+        guard let date = article?.date else { return }
+        let todayVC = todayViewControllerFactory(date)
+        navigationController?.pushViewController(todayVC, animated: true)
     }
 }

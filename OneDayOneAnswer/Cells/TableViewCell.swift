@@ -53,8 +53,8 @@ class TableViewCell: UITableViewCell {
 
     private func setAutoLayout() {
         [
-            cardView.topAnchor.constraint(equalTo: topAnchor),
-            cardView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -30),
+            cardView.topAnchor.constraint(equalTo: topAnchor, constant: 15),
+            cardView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
             cardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             cardView.trailingAnchor.constraint(equalTo: trailingAnchor),
 

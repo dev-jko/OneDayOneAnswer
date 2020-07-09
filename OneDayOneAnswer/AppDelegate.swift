@@ -15,6 +15,7 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let appDependency: AppDependency = AppDependency.resolve()
 
     func application(
         _ application: UIApplication,
@@ -24,9 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance()?.delegate = self
 
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = ListViewController(provider: DependencyProvider())
+        self.window = UIWindow()
         self.window?.makeKeyAndVisible()
+        self.window?.rootViewController = appDependency.rootTabBarControllerFactory()
+
         sleep(2)
         return true
     }
