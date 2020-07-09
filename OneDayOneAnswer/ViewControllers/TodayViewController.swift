@@ -101,13 +101,14 @@ class TodayViewController: BaseViewController {
 
     private let sqldb: DataBase
     private var article: Article?
-    var dateToSet: Date?
+    private var dateToSet: Date?
     let picker = UIImagePickerController()
 
     // MARK: - initializers
 
-    init(dataBase: DataBase) {
+    init(dataBase: DataBase, date: Date? = nil) {
         self.sqldb = dataBase
+        self.dateToSet = date
         super.init()
     }
 

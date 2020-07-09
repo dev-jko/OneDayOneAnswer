@@ -43,14 +43,14 @@ class ListViewController: BaseViewController {
 
     // MARK: - properties
 
-    private let displayViewControllerFactory: () -> DisplayViewController
+    private let displayViewControllerFactory: DisplayViewControllerFactory
     private let sqldb: DataBase
     private var articles: [Article] = []
 
     // MARK: - initializers
 
     init(
-        displayViewControllerFactory: @escaping () -> DisplayViewController,
+        displayViewControllerFactory: @escaping DisplayViewControllerFactory,
         dataBase: DataBase
     ) {
         self.displayViewControllerFactory = displayViewControllerFactory
@@ -166,11 +166,8 @@ extension ListViewController: UITableViewDelegate {
         let count = articles.count - 1
         let item = articles[count - (indexPath.row)]
 
-        let displayVC = displayViewControllerFactory()
-        displayVC.modalTransitionStyle = .flipHorizontal
-        displayVC.modalPresentationStyle = .fullScreen
-        displayVC.dateToSet = item.date
-        present(displayVC, animated: true, completion: nil)
+        let displayVC = displayViewControllerFactory(item.date)
+        navigationController?.pushViewController(displayVC, animated: true)
     }
 
 }

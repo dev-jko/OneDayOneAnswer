@@ -110,19 +110,21 @@ class DisplayViewController: BaseViewController {
 
     // MARK: - properties
 
-    private let todayViewControllerFactory: () -> TodayViewController
+    private let todayViewControllerFactory: TodayViewControllerFactory
     private let sqldb: DataBase
+    private var dateToSet: Date?
     private var article: Article?
-    var dateToSet: Date?
 
     // MARK: - initializers
 
     init(
-        todayViewControllerFactory: @escaping () -> TodayViewController,
-        dataBase: DataBase
+        todayViewControllerFactory: @escaping TodayViewControllerFactory,
+        dataBase: DataBase,
+        date: Date? = nil
     ) {
         self.todayViewControllerFactory = todayViewControllerFactory
         self.sqldb = dataBase
+        self.dateToSet = date
         super.init()
     }
 
@@ -305,11 +307,8 @@ class DisplayViewController: BaseViewController {
     }
 
     @objc func editBtnTouchOn(_ sender: UIButton) {
-
-        let todayVC = todayViewControllerFactory()
-        todayVC.dateToSet = article?.date
-        todayVC.modalTransitionStyle = .flipHorizontal
-        todayVC.modalPresentationStyle = .fullScreen
-        present(todayVC, animated: true, completion: nil)
+        guard let date = article?.date else { return }
+        let todayVC = todayViewControllerFactory(date)
+        navigationController?.pushViewController(todayVC, animated: true)
     }
 }

@@ -17,12 +17,13 @@ extension AppDependency {
 
         let database: DataBase = SqliteDataBase.instance
 
-        let todayViewControllerFactory = { TodayViewController(dataBase: database) }
+        let todayViewControllerFactory = { date in TodayViewController(dataBase: database, date: date) }
 
-        let displayViewControllerFactory = {
+        let displayViewControllerFactory = { date in
             return DisplayViewController(
                 todayViewControllerFactory: todayViewControllerFactory,
-                dataBase: database
+                dataBase: database,
+                date: date
             )
         }
 
@@ -46,3 +47,5 @@ extension AppDependency {
     }
 }
 
+typealias DisplayViewControllerFactory = (Date) -> DisplayViewController
+typealias TodayViewControllerFactory = (Date) -> TodayViewController
