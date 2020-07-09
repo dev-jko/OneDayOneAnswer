@@ -16,8 +16,6 @@ class PrivateAnswerViewController: UINavigationController {
 
     // MARK: - properties
 
-    // MARK: - initializers
-
     // MARK: - life cycle
 
     override func viewDidLoad() {

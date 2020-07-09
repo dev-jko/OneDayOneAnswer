@@ -9,7 +9,7 @@
 import Foundation
 
 struct AppDependency {
-    let rootTabBarControllerFactory: () -> RootTabBarController
+    let rootTabBarControllerFactory: RootTabBarControllerFactory
 }
 
 extension AppDependency {
@@ -34,7 +34,7 @@ extension AppDependency {
             )
         }
 
-        let privateAnswerViewControllerFactory: () -> PrivateAnswerViewController = {
+        let privateAnswerViewControllerFactory: PrivateAnswerViewControllerFactory = {
             let listVC = listViewControllerFactory()
             return PrivateAnswerViewController(rootViewController: listVC)
         }
@@ -47,5 +47,7 @@ extension AppDependency {
     }
 }
 
+typealias RootTabBarControllerFactory = () -> RootTabBarController
+typealias PrivateAnswerViewControllerFactory = () -> PrivateAnswerViewController
 typealias DisplayViewControllerFactory = (Date) -> DisplayViewController
 typealias TodayViewControllerFactory = (Date) -> TodayViewController

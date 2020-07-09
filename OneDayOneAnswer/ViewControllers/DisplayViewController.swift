@@ -14,7 +14,7 @@ import UIKit
 
 class DisplayViewController: BaseViewController {
 
-    // MARK: - UI properties
+    // MARK: - UI Properties
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
@@ -53,16 +53,6 @@ class DisplayViewController: BaseViewController {
         label.font = UIFont(name: "DXPnMStd-Regular", size: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-
-    private lazy var listBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "to_list_white"), for: .normal)
-        btn.imageView?.contentMode = .scaleAspectFit
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(listBtnTouchOn), for: .touchDown)
-        return btn
     }()
 
     private lazy var editBtn: UIButton = {
@@ -108,14 +98,14 @@ class DisplayViewController: BaseViewController {
         return label
     }()
 
-    // MARK: - properties
+    // MARK: - Properties
 
     private let todayViewControllerFactory: TodayViewControllerFactory
     private let sqldb: DataBase
     private var dateToSet: Date?
     private var article: Article?
 
-    // MARK: - initializers
+    // MARK: - Lifecycle
 
     init(
         todayViewControllerFactory: @escaping TodayViewControllerFactory,
@@ -126,13 +116,19 @@ class DisplayViewController: BaseViewController {
         self.sqldb = dataBase
         self.dateToSet = date
         super.init()
+
+        let btnItem = UIBarButtonItem(title: "수정", style: .done, target: self, action: #selector(editBtnTouchOn(_:)))
+        navigationItem.rightBarButtonItem = btnItem
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -144,9 +140,8 @@ class DisplayViewController: BaseViewController {
         scrollView.contentSize.height = scrollContentView.frame.height
     }
 
-    // MARK: - methods
+    // MARK: - Functions
 
-    // MARK: - AutoLayout
     override func setAutoLayout() {
         super.setAutoLayout()
 
@@ -201,7 +196,6 @@ class DisplayViewController: BaseViewController {
 
     private func setTopBox() {
         topBox.addSubview(dateLabel)
-        topBox.addSubview(listBtn)
         topBox.addSubview(editBtn)
 
         [
@@ -210,15 +204,8 @@ class DisplayViewController: BaseViewController {
             dateLabel.leadingAnchor.constraint(equalTo: topBox.leadingAnchor, constant: 20),
             dateLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
 
-            listBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
-            listBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            listBtn.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 10),
-            listBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
-            listBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20),
-
             editBtn.topAnchor.constraint(equalTo: topBox.topAnchor, constant: 5),
             editBtn.bottomAnchor.constraint(equalTo: topBox.bottomAnchor, constant: -5),
-            editBtn.leadingAnchor.constraint(equalTo: listBtn.trailingAnchor, constant: 10),
             editBtn.trailingAnchor.constraint(equalTo: topBox.trailingAnchor, constant: -10),
             editBtn.widthAnchor.constraint(lessThanOrEqualToConstant: 35),
             editBtn.widthAnchor.constraint(greaterThanOrEqualToConstant: 20)
@@ -300,10 +287,6 @@ class DisplayViewController: BaseViewController {
         } else {
             backgroundImage.image = getUIImageFromDocDir(fileName: article.imagePath)
         }
-    }
-
-    @objc func listBtnTouchOn(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
     }
 
     @objc func editBtnTouchOn(_ sender: UIButton) {

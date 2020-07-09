@@ -32,22 +32,13 @@ class ListViewController: BaseViewController {
         return tv
     }()
 
-    private let label: UILabel = {
-        let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.text = "나의 기록"
-        lb.textColor = .white
-        lb.font = UIFont(name: "DXPnMStd-Regular", size: 22)
-        return lb
-    }()
-
     // MARK: - properties
 
     private let displayViewControllerFactory: DisplayViewControllerFactory
     private let sqldb: DataBase
     private var articles: [Article] = []
 
-    // MARK: - initializers
+    // MARK: - life cycle
 
     init(
         displayViewControllerFactory: @escaping DisplayViewControllerFactory,
@@ -56,22 +47,22 @@ class ListViewController: BaseViewController {
         self.displayViewControllerFactory = displayViewControllerFactory
         self.sqldb = dataBase
         super.init()
+
+        navigationItem.title = "나의 기록"
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadArticles()
-
-        // TODO: - 유저 이름 표시하기
-//        if let name = signManager?.user?.displayName {
-//            self.label.text = "\(name)님의 기록"
-//        }
     }
 
     // MARK: - methods
@@ -112,7 +103,6 @@ class ListViewController: BaseViewController {
 
     override func setAutoLayout() {
         view.addSubview(backgroundImage)
-        view.addSubview(label)
         view.addSubview(tableView)
 
         [
@@ -121,11 +111,7 @@ class ListViewController: BaseViewController {
             backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            label.heightAnchor.constraint(equalToConstant: 30),
-            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-
-            tableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -33)
