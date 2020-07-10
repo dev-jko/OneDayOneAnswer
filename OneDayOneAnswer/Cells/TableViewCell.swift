@@ -64,12 +64,12 @@ class TableViewCell: UITableViewCell {
 
             questionLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
             questionLabel.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor),
-            questionLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 20),
+            questionLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
             questionLabel.heightAnchor.constraint(lessThanOrEqualTo: cardView.heightAnchor, multiplier: 0.3),
 
             answerLabel.topAnchor.constraint(equalTo: questionLabel.bottomAnchor, constant: 20),
             answerLabel.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor),
-            answerLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 20)
+            answerLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10)
 
         ].forEach { $0.isActive = true }
 
