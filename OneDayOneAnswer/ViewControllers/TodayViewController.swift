@@ -16,6 +16,7 @@ class TodayViewController: BaseViewController {
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
+        imgView.backgroundColor = .white
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
     }()
@@ -144,7 +145,6 @@ class TodayViewController: BaseViewController {
         }
         super.onLoadingSuccess()
         beginAnimate()
-        showArticle()
         adjustWritingMode()
         bottomBox.isHidden = false
     }
@@ -168,7 +168,7 @@ class TodayViewController: BaseViewController {
             self.imagePath = self.article?.imagePath
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
-                self.state = .success
+                self.showArticle()
             }
         }
     }
@@ -193,7 +193,13 @@ class TodayViewController: BaseViewController {
         if article.imagePath == "" {
             backgroundImage.image = UIImage(named: "catcat0")
         } else {
-            backgroundImage.image = getUIImageFromDocDir(fileName: article.imagePath)
+            getUIImageFromDocDir(fileName: article.imagePath) { [weak self] image in
+                guard let image = image else { return }
+                DispatchQueue.main.async {
+                    self?.backgroundImage.image = image
+                    self?.state = .success
+                }
+            }
         }
     }
 
