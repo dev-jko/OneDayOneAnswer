@@ -41,7 +41,8 @@ class BaseViewController: UIViewController {
 
     let errorView: UILabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.backgroundColor = .white
+        label.textColor = .black
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = UIFont(name: "DXPnMStd-Regular", size: 24)

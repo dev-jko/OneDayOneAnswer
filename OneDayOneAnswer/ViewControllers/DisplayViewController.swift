@@ -18,6 +18,7 @@ class DisplayViewController: BaseViewController {
 
     private let backgroundImage: UIImageView = {
         let imgView = UIImageView()
+        imgView.backgroundColor = .white
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
     }()
@@ -189,7 +190,6 @@ class DisplayViewController: BaseViewController {
         }
         super.onLoadingSuccess()
         bottomBox.isHidden = false
-        showArticle()
     }
 
     private func setArticle() {
@@ -206,6 +206,7 @@ class DisplayViewController: BaseViewController {
             self.article = self.sqldb.selectArticle(date: date)
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
+                self.showArticle()
                 self.state = .success
             }
         }
@@ -229,7 +230,12 @@ class DisplayViewController: BaseViewController {
         if article.imagePath == "" {
             backgroundImage.image = UIImage(named: "catcat0")
         } else {
-            backgroundImage.image = getUIImageFromDocDir(fileName: article.imagePath)
+            getUIImageFromDocDir(fileName: article.imagePath) { [weak self] image in
+                guard let image = image else { return }
+                DispatchQueue.main.async {
+                    self?.backgroundImage.image = image
+                }
+            }
         }
     }
 

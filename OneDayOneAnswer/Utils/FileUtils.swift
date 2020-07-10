@@ -46,16 +46,19 @@ func saveUIImageToDocDir(image: UIImage) -> String? {
     }
 }
 
-func getUIImageFromDocDir(fileName: String) -> UIImage? {
-    guard let fileURL: URL = try? FileManager.default
-        .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-        .appendingPathComponent("ODOA_img", isDirectory: true)
-        .appendingPathComponent(fileName) else {
-        print("image loading fail")
-        return nil
+func getUIImageFromDocDir(fileName: String, completion: @escaping (UIImage?) -> Void) {
+    DispatchQueue.global().async {
+        guard let fileURL: URL = try? FileManager.default
+            .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            .appendingPathComponent("ODOA_img", isDirectory: true)
+            .appendingPathComponent(fileName) else {
+            print("image loading fail")
+            completion(nil)
+            return
+        }
+        let image: UIImage? = UIImage(contentsOfFile: fileURL.path)
+        completion(image)
     }
-    let image: UIImage? = UIImage(contentsOfFile: fileURL.path)
-    return image
 }
 
 func getUIImageFromBundle(fileName: String, fileExtension: String) -> UIImage? {
