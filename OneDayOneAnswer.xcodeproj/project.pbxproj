@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0824B76F24947483004B718F /* SignManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0824B76E24947483004B718F /* SignManager.swift */; };
+		08250A9A24B9952D0009662D /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 08250A9924B9952D0009662D /* .swiftlint.yml */; };
 		0830BF9F247FA792004BBB44 /* OneDayOneAnswerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0830BF9E247FA792004BBB44 /* OneDayOneAnswerTests.swift */; };
 		0830BFA9247FAA98004BBB44 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7444AE2451CFCA000121F8 /* ListViewController.swift */; };
 		08331E87245BEE6B001103A6 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08331E86245BEE6B001103A6 /* DateUtils.swift */; };
@@ -50,6 +51,7 @@
 
 /* Begin PBXFileReference section */
 		0824B76E24947483004B718F /* SignManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignManager.swift; sourceTree = "<group>"; };
+		08250A9924B9952D0009662D /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		0830BF9C247FA792004BBB44 /* OneDayOneAnswerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneDayOneAnswerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0830BF9E247FA792004BBB44 /* OneDayOneAnswerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayOneAnswerTests.swift; sourceTree = "<group>"; };
 		0830BFA0247FA792004BBB44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 		AE74448C2451CCE8000121F8 = {
 			isa = PBXGroup;
 			children = (
+				08250A9924B9952D0009662D /* .swiftlint.yml */,
 				AE7444972451CCE8000121F8 /* OneDayOneAnswer */,
 				0830BF9D247FA792004BBB44 /* OneDayOneAnswerTests */,
 				AE7444962451CCE8000121F8 /* Products */,
@@ -354,6 +357,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08250A9A24B9952D0009662D /* .swiftlint.yml in Resources */,
 				5286A8D82463FE4500DAA0AD /* DXPnMStd-Regular.otf in Resources */,
 				089742312480A86500645189 /* GoogleService-Info.plist in Resources */,
 				AE7444A32451CCE8000121F8 /* LaunchScreen.storyboard in Resources */,
