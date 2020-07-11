@@ -2,7 +2,7 @@ name: SwiftLint
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, lint/** ]
     paths:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
