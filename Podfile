@@ -8,6 +8,8 @@ target 'OneDayOneAnswer' do
 	# Pods for OneDayOneAnswer
 	# add the Firebase pod for Google Analytics
 	
+	pod 'Firebase/Performance'
+	pod 'Firebase/Crashlytics'
 	pod 'Firebase/Analytics'
 	pod 'Firebase/Auth'
 	pod 'GoogleSignIn'
