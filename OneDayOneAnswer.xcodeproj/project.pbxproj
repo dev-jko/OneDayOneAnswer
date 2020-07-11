@@ -305,6 +305,7 @@
 				0479604CD2C61B127D242AF1 /* [CP] Embed Pods Frameworks */,
 				0819062E248206DC00BCF3FA /* SwiftLint */,
 				90435B5975E1E01DFBA662D3 /* [CP] Copy Pods Resources */,
+				08250A9B24B9FB950009662D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -411,6 +412,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PODS_ROOT}/SwiftLint/swiftlint autocorrect\n";
+		};
+		08250A9B24B9FB950009662D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
 		90435B5975E1E01DFBA662D3 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

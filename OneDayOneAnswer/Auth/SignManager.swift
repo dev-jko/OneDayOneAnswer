@@ -32,11 +32,11 @@ class SignManager {
 }
 
 class GoogleSignInDelegate: NSObject, GIDSignInDelegate {
-    
+
     static let shared: GoogleSignInDelegate = GoogleSignInDelegate()
-    
+
     // MARK: - Lifecycle
-    
+
     private override init() {
         super.init()
     }
