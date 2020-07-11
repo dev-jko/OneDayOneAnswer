@@ -105,6 +105,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08250A9824B8A4760009662D /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				0824B76E24947483004B718F /* SignManager.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
 		0830BF9D247FA792004BBB44 /* OneDayOneAnswerTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -238,9 +246,9 @@
 		AE7444972451CCE8000121F8 /* OneDayOneAnswer */ = {
 			isa = PBXGroup;
 			children = (
+				08250A9824B8A4760009662D /* Auth */,
 				08BDF7C624B4B45A006D7584 /* Library */,
 				AE7444982451CCE8000121F8 /* AppDelegate.swift */,
-				0824B76E24947483004B718F /* SignManager.swift */,
 				0878093B2487490500153FD6 /* DI */,
 				0875F713247FB0DD009A82C3 /* ViewControllers */,
 				0830BFA8247FA8C9004BBB44 /* Cells */,

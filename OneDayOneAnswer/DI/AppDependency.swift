@@ -10,19 +10,23 @@ import Foundation
 
 struct AppDependency {
     let rootTabBarControllerFactory: RootTabBarControllerFactory
+    let googleSignInDelegateFactory: GoogleSignInDelegateFactory
 }
 
 extension AppDependency {
     static func resolve() -> AppDependency {
 
-        let database: DataBase = SqliteDataBase.instance
+        let databaseFactory: DataBaseFactory = { SqliteDataBase.instance }
+        let googleSignInDelegateFactory: GoogleSignInDelegateFactory = { GoogleSignInDelegate.shared }
 
-        let todayViewControllerFactory = { date in TodayViewController(dataBase: database, date: date) }
+        let todayViewControllerFactory = { date in
+            TodayViewController(dataBase: databaseFactory(), date: date)
+        }
 
         let displayViewControllerFactory = { date in
             return DisplayViewController(
                 todayViewControllerFactory: todayViewControllerFactory,
-                dataBase: database,
+                dataBase: databaseFactory(),
                 date: date
             )
         }
@@ -30,7 +34,7 @@ extension AppDependency {
         let listViewControllerFactory = {
             return ListViewController(
                 displayViewControllerFactory: displayViewControllerFactory,
-                dataBase: database
+                dataBase: databaseFactory()
             )
         }
 
@@ -43,10 +47,15 @@ extension AppDependency {
             return RootTabBarController(privateAnswerViewControllerFactory: privateAnswerViewControllerFactory)
         }
 
-        return AppDependency(rootTabBarControllerFactory: rootTabBarControllerFactory)
+        return AppDependency(
+            rootTabBarControllerFactory: rootTabBarControllerFactory,
+            googleSignInDelegateFactory: googleSignInDelegateFactory
+        )
     }
 }
 
+typealias DataBaseFactory = () -> DataBase
+typealias GoogleSignInDelegateFactory = () -> GoogleSignInDelegate
 typealias RootTabBarControllerFactory = () -> RootTabBarController
 typealias PrivateAnswerViewControllerFactory = () -> PrivateAnswerViewController
 typealias DisplayViewControllerFactory = (Date) -> DisplayViewController
