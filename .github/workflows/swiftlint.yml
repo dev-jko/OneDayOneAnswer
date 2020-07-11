@@ -22,11 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Cache modules
+      - name: Cache Pods modules
         uses: actions/cache@v2
         with:
-          path: cache-modules
-          key: ${{ runner.OS }}-${{ env.cache-name }}
+          path: |
+            Pods
+            norio-nomura/action-swiftlint
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: GitHub Action for SwiftLint (Only files changed in the PR)
         uses: norio-nomura/action-swiftlint@3.1.0
