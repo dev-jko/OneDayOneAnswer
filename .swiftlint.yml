@@ -1,0 +1,6 @@
+identifier_name:
+    exclude:
+        - x
+        - xs
+        - f
+        - g
