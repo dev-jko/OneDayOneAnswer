@@ -193,6 +193,7 @@ class TodayViewController: BaseViewController {
         if article.imagePath == "" {
             backgroundImage.image = UIImage(named: "catcat0")
         } else {
+            imagePath = article.imagePath
             getUIImageFromDocDir(fileName: article.imagePath) { [weak self] image in
                 guard let image = image else { return }
                 DispatchQueue.main.async {
@@ -238,7 +239,7 @@ class TodayViewController: BaseViewController {
         guard var article = article else { print("save error article is nil"); return }
         article.answer = answerText.text
         article.imagePath = imagePath ?? ""
-        if sqldb.updateArticle(article: article) == true {
+        if sqldb.updateArticle(article: article) {
             self.navigationController?.popViewController(animated: true)
         } else {
             print("Update Test Error!")

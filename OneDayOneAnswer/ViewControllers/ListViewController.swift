@@ -12,25 +12,8 @@ class ListViewController: BaseViewController {
 
     // MARK: - UI properties
 
-    private let backgroundImage: UIImageView = {
-        let iv = UIImageView()
-        let image = UIImage(imageLiteralResourceName: "catcat0")
-        iv.image = image
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        return iv
-    }()
-
-    private lazy var tableView: UITableView = {
-        let tv = UITableView()
-        tv.dataSource = self
-        tv.delegate = self
-        tv.backgroundColor = .clear
-        tv.showsVerticalScrollIndicator = false
-        tv.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
-        tv.isHidden = true
-        tv.translatesAutoresizingMaskIntoConstraints = false
-        return tv
-    }()
+    private let backgroundImage: UIImageView = UIImageView()
+    private let tableView: UITableView = UITableView()
 
     // MARK: - properties
 
@@ -48,16 +31,12 @@ class ListViewController: BaseViewController {
         self.sqldb = dataBase
         super.init()
 
-        navigationItem.title = "나의 기록"
+        setTableView()
+        bindStyles()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -66,6 +45,22 @@ class ListViewController: BaseViewController {
     }
 
     // MARK: - methods
+
+    private func setTableView() {
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+    }
+
+    private func bindStyles() {
+        self.navigationItem.title = "나의 기록"
+
+        _ = self.backgroundImage
+            |> defaultBackgroundImageViewStyle()
+
+        _ = self.tableView
+            |> defaultTableViewStyle()
+    }
 
     override func onLoading() {
         super.onLoading()
@@ -105,7 +100,10 @@ class ListViewController: BaseViewController {
         view.addSubview(backgroundImage)
         view.addSubview(tableView)
 
-        [
+        self.backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.tableView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
             backgroundImage.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -115,7 +113,7 @@ class ListViewController: BaseViewController {
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -33)
-        ].forEach { $0.isActive = true }
+        ])
     }
 }
 

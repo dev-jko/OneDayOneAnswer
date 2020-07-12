@@ -16,25 +16,18 @@ class DisplayViewController: BaseViewController {
 
     // MARK: - UI Properties
 
-    private let backgroundImage: UIImageView = {
-        let imgView = UIImageView()
-        imgView.backgroundColor = .white
-        imgView.translatesAutoresizingMaskIntoConstraints = false
-        return imgView
-    }()
+    private let backgroundImage: UIImageView = UIImageView()
 
     private let scrollView: UIScrollView = {
         let sv = UIScrollView()
         sv.contentMode = .scaleToFill
         sv.backgroundColor = .clear
-        sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
 
     private let scrollContentView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -44,7 +37,6 @@ class DisplayViewController: BaseViewController {
         view.layer.cornerRadius = 15
         view.layer.masksToBounds = true
         view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -55,7 +47,6 @@ class DisplayViewController: BaseViewController {
         label.numberOfLines = 0
         label.textAlignment = .justified
         label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -67,7 +58,6 @@ class DisplayViewController: BaseViewController {
         label.numberOfLines = 0
         label.textAlignment = .natural
         label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -90,6 +80,8 @@ class DisplayViewController: BaseViewController {
         self.dateToSet = date
         super.init()
 
+        bindStyles()
+
         let btnItem = UIBarButtonItem(title: "수정", style: .done, target: self, action: #selector(editBtnTouchOn(_:)))
         navigationItem.rightBarButtonItem = btnItem
         let backBtnItem = UIBarButtonItem(title: "취소", style: .plain, target: nil, action: nil)
@@ -98,11 +90,6 @@ class DisplayViewController: BaseViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -117,6 +104,11 @@ class DisplayViewController: BaseViewController {
 
     // MARK: - Functions
 
+    private func bindStyles() {
+        _ = self.backgroundImage
+            |> defaultBackgroundImageViewStyle()
+    }
+
     override func setAutoLayout() {
         super.setAutoLayout()
 
@@ -124,6 +116,9 @@ class DisplayViewController: BaseViewController {
 
         view.addSubview(backgroundImage)
         view.addSubview(scrollView)
+
+        self.backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         [
             backgroundImage.topAnchor.constraint(equalTo: view.topAnchor),
@@ -146,6 +141,9 @@ class DisplayViewController: BaseViewController {
         scrollContentView.addSubview(bottomBox)
         scrollView.addSubview(scrollContentView)
 
+        self.bottomBox.translatesAutoresizingMaskIntoConstraints = false
+        self.scrollContentView.translatesAutoresizingMaskIntoConstraints = false
+
         [
             bottomBox.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 40),
             bottomBox.bottomAnchor.constraint(equalTo: answerLabel.bottomAnchor, constant: 30),
@@ -164,6 +162,9 @@ class DisplayViewController: BaseViewController {
     private func setBottomBox() {
         bottomBox.addSubview(questionLabel)
         bottomBox.addSubview(answerLabel)
+
+        self.questionLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.answerLabel.translatesAutoresizingMaskIntoConstraints = false
 
         [
             questionLabel.topAnchor.constraint(equalTo: bottomBox.topAnchor, constant: 30),
