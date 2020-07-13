@@ -19,6 +19,10 @@
 		0878093F24876E0300153FD6 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0878093E24876E0300153FD6 /* BaseViewController.swift */; };
 		0878A55A2493824E00851691 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0878A5592493824E00851691 /* SignInViewController.swift */; };
 		088F336B24601B58003B851D /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088F336A24601B58003B851D /* FileUtils.swift */; };
+		08915B7224BB3944001E91BC /* ImageViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7124BB3944001E91BC /* ImageViewStyles.swift */; };
+		08915B7424BB48A1001E91BC /* TableViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7324BB48A1001E91BC /* TableViewStyles.swift */; };
+		08915B7624BB4A91001E91BC /* LabelStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7524BB4A91001E91BC /* LabelStyles.swift */; };
+		08915B7824BC4533001E91BC /* FontStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7724BC4533001E91BC /* FontStyles.swift */; };
 		089742312480A86500645189 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 089742302480A86500645189 /* GoogleService-Info.plist */; };
 		08BDF7C524B4793C006D7584 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDF7C424B4793C006D7584 /* RootTabBarController.swift */; };
 		08BDF7C924B4B4E8006D7584 /* TabBarItemStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDF7C824B4B4E8006D7584 /* TabBarItemStyles.swift */; };
@@ -62,6 +66,10 @@
 		0878093E24876E0300153FD6 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		0878A5592493824E00851691 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		088F336A24601B58003B851D /* FileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
+		08915B7124BB3944001E91BC /* ImageViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewStyles.swift; sourceTree = "<group>"; };
+		08915B7324BB48A1001E91BC /* TableViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewStyles.swift; sourceTree = "<group>"; };
+		08915B7524BB4A91001E91BC /* LabelStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyles.swift; sourceTree = "<group>"; };
+		08915B7724BC4533001E91BC /* FontStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontStyles.swift; sourceTree = "<group>"; };
 		089742302480A86500645189 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		08BDF7C424B4793C006D7584 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		08BDF7C824B4B4E8006D7584 /* TabBarItemStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemStyles.swift; sourceTree = "<group>"; };
@@ -201,6 +209,10 @@
 			isa = PBXGroup;
 			children = (
 				08BDF7C824B4B4E8006D7584 /* TabBarItemStyles.swift */,
+				08915B7124BB3944001E91BC /* ImageViewStyles.swift */,
+				08915B7324BB48A1001E91BC /* TableViewStyles.swift */,
+				08915B7524BB4A91001E91BC /* LabelStyles.swift */,
+				08915B7724BC4533001E91BC /* FontStyles.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -495,9 +507,13 @@
 				08BDF7D424B5EC54006D7584 /* AppDependency.swift in Sources */,
 				08BDF7CE24B5A0D5006D7584 /* ProfileViewController.swift in Sources */,
 				08BDF7D024B5A15A006D7584 /* PrivateAnswerViewController.swift in Sources */,
+				08915B7624BB4A91001E91BC /* LabelStyles.swift in Sources */,
+				08915B7224BB3944001E91BC /* ImageViewStyles.swift in Sources */,
 				AE74449B2451CCE8000121F8 /* TodayViewController.swift in Sources */,
 				08331E87245BEE6B001103A6 /* DateUtils.swift in Sources */,
 				08BDF7D224B5A1EB006D7584 /* SharedAnswerViewController.swift in Sources */,
+				08915B7824BC4533001E91BC /* FontStyles.swift in Sources */,
+				08915B7424BB48A1001E91BC /* TableViewStyles.swift in Sources */,
 				0878A55A2493824E00851691 /* SignInViewController.swift in Sources */,
 				0878093F24876E0300153FD6 /* BaseViewController.swift in Sources */,
 				AE7444992451CCE8000121F8 /* AppDelegate.swift in Sources */,

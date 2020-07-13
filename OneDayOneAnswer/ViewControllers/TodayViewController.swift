@@ -30,16 +30,7 @@ class TodayViewController: BaseViewController {
         return view
     }()
 
-    private let questionLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 18)
-        label.numberOfLines = 0
-        label.textAlignment = .justified
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let questionLabel: UILabel = UILabel()
 
     private lazy var answerText: UITextView = {
         let tv = UITextView()
@@ -96,10 +87,19 @@ class TodayViewController: BaseViewController {
 
     // MARK: - Functions
 
+    private func bindStyle() {
+        _ = self.questionLabel
+            |> defaultLabelStyle(fontSize: 18)
+        
+    }
+    
     override func setAutoLayout() {
         setBottomBox()
         view.addSubview(backgroundImage)
         view.addSubview(bottomBox)
+        
+        self.backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.bottomBox.translatesAutoresizingMaskIntoConstraints = false
 
         [
             backgroundImage.topAnchor.constraint(equalTo: view.topAnchor),
@@ -118,7 +118,10 @@ class TodayViewController: BaseViewController {
     private func setBottomBox() {
         bottomBox.addSubview(questionLabel)
         bottomBox.addSubview(answerText)
-
+        
+        self.questionLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.answerText.translatesAutoresizingMaskIntoConstraints = false
+        
         [
             questionLabel.topAnchor.constraint(equalTo: bottomBox.topAnchor, constant: 30),
             questionLabel.leadingAnchor.constraint(equalTo: bottomBox.leadingAnchor, constant: 25),
@@ -193,6 +196,7 @@ class TodayViewController: BaseViewController {
         if article.imagePath == "" {
             backgroundImage.image = UIImage(named: "catcat0")
         } else {
+            imagePath = article.imagePath
             getUIImageFromDocDir(fileName: article.imagePath) { [weak self] image in
                 guard let image = image else { return }
                 DispatchQueue.main.async {
@@ -238,7 +242,7 @@ class TodayViewController: BaseViewController {
         guard var article = article else { print("save error article is nil"); return }
         article.answer = answerText.text
         article.imagePath = imagePath ?? ""
-        if sqldb.updateArticle(article: article) == true {
+        if sqldb.updateArticle(article: article) {
             self.navigationController?.popViewController(animated: true)
         } else {
             print("Update Test Error!")
