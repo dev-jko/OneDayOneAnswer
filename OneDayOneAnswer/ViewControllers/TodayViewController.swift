@@ -30,16 +30,7 @@ class TodayViewController: BaseViewController {
         return view
     }()
 
-    private let questionLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 18)
-        label.numberOfLines = 0
-        label.textAlignment = .justified
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let questionLabel: UILabel = UILabel()
 
     private lazy var answerText: UITextView = {
         let tv = UITextView()
@@ -96,10 +87,19 @@ class TodayViewController: BaseViewController {
 
     // MARK: - Functions
 
+    private func bindStyle() {
+        _ = self.questionLabel
+            |> defaultLabelStyle(fontSize: 18)
+        
+    }
+    
     override func setAutoLayout() {
         setBottomBox()
         view.addSubview(backgroundImage)
         view.addSubview(bottomBox)
+        
+        self.backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.bottomBox.translatesAutoresizingMaskIntoConstraints = false
 
         [
             backgroundImage.topAnchor.constraint(equalTo: view.topAnchor),
@@ -118,7 +118,10 @@ class TodayViewController: BaseViewController {
     private func setBottomBox() {
         bottomBox.addSubview(questionLabel)
         bottomBox.addSubview(answerText)
-
+        
+        self.questionLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.answerText.translatesAutoresizingMaskIntoConstraints = false
+        
         [
             questionLabel.topAnchor.constraint(equalTo: bottomBox.topAnchor, constant: 30),
             questionLabel.leadingAnchor.constraint(equalTo: bottomBox.leadingAnchor, constant: 25),

@@ -22,6 +22,7 @@
 		08915B7224BB3944001E91BC /* ImageViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7124BB3944001E91BC /* ImageViewStyles.swift */; };
 		08915B7424BB48A1001E91BC /* TableViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7324BB48A1001E91BC /* TableViewStyles.swift */; };
 		08915B7624BB4A91001E91BC /* LabelStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7524BB4A91001E91BC /* LabelStyles.swift */; };
+		08915B7824BC4533001E91BC /* FontStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08915B7724BC4533001E91BC /* FontStyles.swift */; };
 		089742312480A86500645189 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 089742302480A86500645189 /* GoogleService-Info.plist */; };
 		08BDF7C524B4793C006D7584 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDF7C424B4793C006D7584 /* RootTabBarController.swift */; };
 		08BDF7C924B4B4E8006D7584 /* TabBarItemStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDF7C824B4B4E8006D7584 /* TabBarItemStyles.swift */; };
@@ -68,6 +69,7 @@
 		08915B7124BB3944001E91BC /* ImageViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewStyles.swift; sourceTree = "<group>"; };
 		08915B7324BB48A1001E91BC /* TableViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewStyles.swift; sourceTree = "<group>"; };
 		08915B7524BB4A91001E91BC /* LabelStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyles.swift; sourceTree = "<group>"; };
+		08915B7724BC4533001E91BC /* FontStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontStyles.swift; sourceTree = "<group>"; };
 		089742302480A86500645189 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		08BDF7C424B4793C006D7584 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		08BDF7C824B4B4E8006D7584 /* TabBarItemStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemStyles.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				08915B7124BB3944001E91BC /* ImageViewStyles.swift */,
 				08915B7324BB48A1001E91BC /* TableViewStyles.swift */,
 				08915B7524BB4A91001E91BC /* LabelStyles.swift */,
+				08915B7724BC4533001E91BC /* FontStyles.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -509,6 +512,7 @@
 				AE74449B2451CCE8000121F8 /* TodayViewController.swift in Sources */,
 				08331E87245BEE6B001103A6 /* DateUtils.swift in Sources */,
 				08BDF7D224B5A1EB006D7584 /* SharedAnswerViewController.swift in Sources */,
+				08915B7824BC4533001E91BC /* FontStyles.swift in Sources */,
 				08915B7424BB48A1001E91BC /* TableViewStyles.swift in Sources */,
 				0878A55A2493824E00851691 /* SignInViewController.swift in Sources */,
 				0878093F24876E0300153FD6 /* BaseViewController.swift in Sources */,

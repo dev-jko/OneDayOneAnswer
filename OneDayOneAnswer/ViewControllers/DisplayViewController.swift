@@ -40,26 +40,8 @@ class DisplayViewController: BaseViewController {
         return view
     }()
 
-    private let questionLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 18)
-        label.numberOfLines = 0
-        label.textAlignment = .justified
-        label.lineBreakMode = .byWordWrapping
-        return label
-    }()
-
-    private let answerLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "DXPnMStd-Regular", size: 17)
-        label.backgroundColor = .clear
-        label.numberOfLines = 0
-        label.textAlignment = .natural
-        label.lineBreakMode = .byWordWrapping
-        return label
-    }()
+    private let questionLabel: UILabel = UILabel()
+    private let answerLabel: UILabel = UILabel()
 
     // MARK: - Properties
 
@@ -107,6 +89,13 @@ class DisplayViewController: BaseViewController {
     private func bindStyles() {
         _ = self.backgroundImage
             |> defaultBackgroundImageViewStyle()
+
+        _ = self.questionLabel
+            |> defaultLabelStyle(fontSize: 18)
+
+        _ = self.answerLabel
+            |> defaultLabelStyle(fontSize: 17)
+
     }
 
     override func setAutoLayout() {
